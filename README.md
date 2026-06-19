@@ -1,55 +1,62 @@
-env-crypto-deploy-check
-Проверка шифрования переменных окружения при деплое
-Надёжный способ убедиться, что ваши секреты доходят до продакшена без утечек.
+# env-crypto-deploy-check
 
-Live demo: https://314oner.github.io/env-crypto-deploy-check/
+> Проверка шифрования переменных окружения при деплое  
+> Надёжный способ убедиться, что ваши секреты доходят до продакшена без утечек.
 
-Features
-🔐 Шифрование .env.production с помощью @dotenvx/dotenvx
+**Live demo:** https://314oner.github.io/env-crypto-deploy-check/
 
-🧪 Расшифровка в GitHub Actions через Repository Secret (DOTENV_PRIVATE_KEY_PRODUCTION)
+---
 
-📡 Два HTTP-клиента: публичный (без withCredentials) и приватный (с куками)
+## Features
 
-🖥️ Логирование всех переменных VITE_* в консоли браузера – всегда видно, какие значения подставлены
+- 🔐 Шифрование `.env.production` с помощью `@dotenvx/dotenvx`
+- 🧪 Расшифровка в GitHub Actions через **Repository Secret** (`DOTENV_PRIVATE_KEY_PRODUCTION`)
+- 📡 Два HTTP-клиента: **публичный** (без `withCredentials`) и **приватный** (с куками)
+- 🖥️ Логирование всех переменных `VITE_*` в консоли браузера – всегда видно, какие значения подставлены
+- ⚡ TypeScript typecheck на CI, сборка и деплой на GitHub Pages
+- 💾 Кэширование зависимостей для экономии минут GitHub Actions
+- 🌐 BrowserRouter – роутинг в React
 
-⚡ TypeScript typecheck на CI, сборка и деплой на GitHub Pages
+---
 
-💾 Кэширование зависимостей для экономии минут GitHub Actions
+## Tech stack
 
-🌐 BrowserRouter – роутинг в React
+| Компонент | Технология |
+|-----------|------------|
+| **Build** | Vite 5 |
+| **Framework** | React 18 |
+| **Language** | TypeScript 5 (strict) |
+| **HTTP client** | Axios |
+| **Environment encryption** | dotenvx |
+| **CI/CD** | GitHub Actions (typecheck, build, deploy to GitHub Pages) |
+| **Package manager** | Yarn 4 |
 
-Tech stack
-Build: Vite 5
+---
 
-Framework: React 18
+## Local development
 
-Language: TypeScript 5 (strict)
+Требуется Node 20+ (см. `.nvmrc`).
 
-HTTP client: Axios
-
-Environment encryption: dotenvx
-
-CI/CD: GitHub Actions (typecheck, build, deploy to GitHub Pages)
-
-Package manager: Yarn 4
-
-Local development
-Требуется Node 20+ (см. .nvmrc).
-
-bash
+```bash
 yarn install
-yarn dev                # http://localhost:5173
+yarn dev          # http://localhost:5173
+```
+
 Другие скрипты:
 
-bash
-yarn frontend:build     # production-сборка (без расшифровки, используйте preview)
-yarn preview            # предпросмотр продакшен-сборки с расшифровкой .env.production
-yarn typecheck          # tsc --noEmit
-yarn env:encrypt        # зашифровать .env.production
-yarn env:decrypt        # расшифровать .env.production (локально, если есть приватный ключ)
-Project structure
-text
+```bash
+yarn frontend:build   # production-сборка (без расшифровки, используйте preview)
+yarn preview          # предпросмотр продакшен-сборки с расшифровкой .env.production
+yarn typecheck        # tsc --noEmit
+yarn env:encrypt      # зашифровать .env.production
+yarn env:decrypt      # расшифровать .env.production (локально, если есть приватный ключ)
+```
+
+---
+
+## Project structure
+
+```
 src/
 ├── shared/api/
 │   ├── config/
@@ -70,32 +77,40 @@ src/
 │   └── routes/private-route.tsx
 ├── App.tsx
 └── main.tsx                   # точка входа с BrowserRouter
-How encryption works
-Локально создаётся .env.production с реальными значениями.
+```
 
-Запуск yarn env:encrypt шифрует файл, генерируя публичный и приватный ключи.
+---
 
-Приватный ключ (начинается с priv_...) сохраняется в Repository Secret (DOTENV_PRIVATE_KEY_PRODUCTION) на GitHub.
+## How encryption works
 
-В GitHub Actions шаг сборки использует dotenvx run -f .env.production -- yarn frontend:build, что автоматически расшифровывает переменные в рантайме.
+1. Локально создаётся `.env.production` с реальными значениями.
+2. Запуск `yarn env:encrypt` шифрует файл, генерируя публичный и приватный ключи.
+3. Приватный ключ (начинается с `priv_...`) сохраняется в **Repository Secret** (`DOTENV_PRIVATE_KEY_PRODUCTION`) на GitHub.
+4. В GitHub Actions шаг сборки использует `dotenvx run -f .env.production -- yarn frontend:build`, что автоматически расшифровывает переменные в рантайме.
+5. В браузере (в режиме production) в консоли отображаются расшифрованные значения, что подтверждает корректность подстановки.
 
-В браузере (в режиме production) в консоли отображаются расшифрованные значения, что подтверждает корректность подстановки.
+---
 
-CI/CD pipelines
-Два воркфлоу в .github/workflows:
+## CI/CD pipelines
 
-ci.yml – запускается на каждый PR и push в не‑main ветки. Выполняет tsc --noEmit (typecheck). Использует кэш Yarn для скорости.
+Два воркфлоу в `.github/workflows`:
 
-deploy.yml – запускается только при пуше в main. Выполняет typecheck, сборку с расшифровкой и деплой на GitHub Pages.
+- **`ci.yml`** – запускается на каждый PR и push в не‑main ветки. Выполняет `tsc --noEmit` (typecheck). Использует кэш Yarn для скорости.
+- **`deploy.yml`** – запускается только при пуше в `main`. Выполняет typecheck, сборку с расшифровкой и деплой на GitHub Pages.
 
-Environment files
-.env.example – шаблон для разработки (не зашифрован).
+---
 
-.env.production – зашифрованный файл (хранится в репозитории, но без приватного ключа не читается).
+## Environment files
 
-.env.production.public – публичный ключ для шифрования (не секретный).
+| Файл | Назначение |
+|------|------------|
+| `.env.example` | Шаблон для разработки (не зашифрован) |
+| `.env.production` | Зашифрованный файл (хранится в репозитории, но без приватного ключа не читается) |
+| `.env.production.public` | Публичный ключ для шифрования (не секретный) |
+| `.env.production.keys` | Содержит публичный и приватный ключи (не коммитится, только локально) |
 
-.env.production.keys – содержит публичный и приватный ключи (не коммитится, только локально).
+---
 
-License
-MIT – делайте с этим кодом всё, что захотите.
+## License
+
+[MIT](./LICENSE) – делайте с этим кодом всё, что захотите.
