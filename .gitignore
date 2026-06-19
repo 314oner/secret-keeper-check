@@ -1,0 +1,63 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Local env files
+.env.keys
+
+# Testing
+coverage
+
+# Turbo
+.turbo
+
+# Vercel
+.vercel
+
+# Build Outputs
+.next/
+out/
+build
+dist
+tsconfig.tsbuildinfo
+vite.config.ts.timestamp-*
+dev-dist
+generated
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Misc
+.DS_Store
+*.secret.env
+*.secret.yaml
+*.agekey
+*.pub
+*.key
+*.pem
+.decrypted~*
+
+
+# DB
+*.sqlite
+*.sqlite3
+
+
+# Environment variables
+.env*
+!.env
+!.env.production
+!.env.example
+!.env.vault
+
+# Yarn
+.pnp.cjs
+.pnp.loader.mjs
+
+
+*.csv
