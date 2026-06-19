@@ -42,7 +42,7 @@ jobs:
       - name: Build with dotenvx
         env:
           DOTENV_PRIVATE_KEY_PRODUCTION: ${{ secrets.DOTENV_PRIVATE_KEY_PRODUCTION }}
-        run: yarn dlx @dotenvx/dotenvx run -- yarn frontend:build
+        run: yarn dlx @dotenvx/dotenvx run -f .env.production -- yarn frontend:build
 
       - name: Setup Pages
         uses: actions/configure-pages@v5 
