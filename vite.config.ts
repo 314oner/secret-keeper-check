@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react-swc";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  base: "/secret-keeper-check/",
+  base: "/env-crypto-deploy-check/",
   plugins: [react()],
   server: {
     proxy: {
