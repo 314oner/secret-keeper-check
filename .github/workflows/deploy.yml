@@ -24,24 +24,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
       - name: Enable Corepack
         run: corepack enable
 
-      - name: Cache Yarn deps
-        uses: actions/cache@v4
-        id: yarn-cache
+      - name: Setup Node.js (LTS v22)
+        uses: actions/setup-node@v4
         with:
-          path: .yarn/cache
-          key: yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: yarn-
+          node-version: 22
+          cache: 'yarn' 
 
       - name: Install deps
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn install --immutable
 
       - name: Type Check
@@ -53,7 +45,7 @@ jobs:
         run: yarn dlx @dotenvx/dotenvx run -- yarn frontend:build
 
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5 
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
